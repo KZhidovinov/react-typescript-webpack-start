@@ -1,24 +1,24 @@
 const path = require('path');
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
     mode: 'development',
-
+    entry: 'index.tsx',
+    devtool: 'source-map',
     context: path.join(__dirname),
 
     output: {
-        filename: 'bundle.js',
-        path: path.join(__dirname, 'dist')
+        filename: '[name].[hash].js',
+        path: path.join(__dirname, 'wwwroot')
     },
-
-    devtool: 'source-map',
 
     devServer: {
         host: 'localhost',
         port: 9000,
         hot: true,
-        contentBase: path.join(__dirname, 'dist')
+        contentBase: path.join(__dirname, 'wwwroot')
     },
 
     module: {
@@ -26,11 +26,11 @@ module.exports = {
             {
                 test: /\.ts(x?)$/,
                 exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'ts-loader'
-                    }
-                ]
+                use: ['ts-loader']
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
             },
             {
                 enforce: 'pre',
@@ -50,6 +50,8 @@ module.exports = {
     },
 
     plugins: [
+        new webpack.ProgressPlugin(),
+        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, 'public', 'index.html'),
         })
